@@ -35,7 +35,7 @@ async function run(): Promise<void> {
       if (version === undefined) {
         info(DebugMessages.VERSION_NOT_FOUND(RELEASE_NAME))
       } else {
-        info(DebugMessages.VERSION_FOUND(RELEASE_NAME))
+        info(DebugMessages.VERSION_FOUND(RELEASE_NAME, version.id))
       }
 
       return
@@ -54,6 +54,7 @@ async function run(): Promise<void> {
           name: RELEASE_NAME,
           released: release,
           projectId: Number(project.id),
+          startDate: new Date().toISOString(),
           ...(release && { releaseDate: new Date().toISOString() })
         }
 
@@ -61,25 +62,28 @@ async function run(): Promise<void> {
         info(DebugMessages.VERSION_CREATED(RELEASE_NAME))
       }
     } else {
-      info(DebugMessages.VERSION_WILL_BE_UPDATED(RELEASE_NAME))
+      info(DebugMessages.VERSION_FOUND(RELEASE_NAME, version.id))
 
-      const versionToUpdate: UpdateVersionParams = {
-        released: release,
-        releaseDate: new Date().toISOString()
+      if (release) {
+        info(DebugMessages.VERSION_WILL_BE_RELEASED(RELEASE_NAME))
+
+        const versionToUpdate: UpdateVersionParams = {
+          released: true,
+          releaseDate: new Date().toISOString()
+        }
+
+        version = await api.updateVersion(version.id, versionToUpdate)
+        info(DebugMessages.VERSION_RELEASED(RELEASE_NAME))
       }
-      version = await api.updateVersion(version.id, versionToUpdate)
-      info(DebugMessages.VERSION_UPDATED(RELEASE_NAME))
     }
 
-    if (TICKETS !== '') {
+    if (TICKETS !== '' && version !== undefined) {
       const tickets = TICKETS.split(',')
       for (const ticket of tickets) {
-        info(DebugMessages.UPDATING_TICKET(ticket))
+        info(DebugMessages.ADDING_TICKET_TO_VERSION(ticket, RELEASE_NAME))
 
-        if (version?.id !== undefined) {
-          api.updateIssue(ticket, version.id)
-          info(DebugMessages.TICKET_UPDATED(ticket, version.id))
-        }
+        api.updateIssue(ticket, version.id)
+        info(DebugMessages.TICKET_ADDED_TO_VERSION(ticket, version.id))
       }
     }
   } catch (_e) {
