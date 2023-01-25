@@ -27,7 +27,7 @@ export type CreateVersionParams = {
   released: boolean
   projectId: number
   startDate: string
-  releaseDate?: string | undefined
+  releaseDate?: string
 }
 
 export type ErrorResponse = {
