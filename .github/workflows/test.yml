@@ -26,4 +26,3 @@ jobs:
           jira_project: PROJ
           release_name: New Release Name
           tickets: PROJ-1,PROJ-2,PROJ-9
-          
