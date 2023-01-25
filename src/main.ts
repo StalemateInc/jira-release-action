@@ -54,32 +54,32 @@ async function run(): Promise<void> {
           name: RELEASE_NAME,
           released: release,
           projectId: Number(project.id),
+          startDate: new Date().toISOString(),
           ...(release && { releaseDate: new Date().toISOString() })
         }
 
         version = await api.createVersion(versionToCreate)
         info(DebugMessages.VERSION_CREATED(RELEASE_NAME))
       }
-    } else {
-      info(DebugMessages.VERSION_WILL_BE_UPDATED(RELEASE_NAME))
+    } else if (release) {
+      info(DebugMessages.VERSION_WILL_BE_RELEASED(RELEASE_NAME))
 
       const versionToUpdate: UpdateVersionParams = {
-        released: release,
+        released: true,
         releaseDate: new Date().toISOString()
       }
+
       version = await api.updateVersion(version.id, versionToUpdate)
-      info(DebugMessages.VERSION_UPDATED(RELEASE_NAME))
+      info(DebugMessages.VERSION_RELEASED(RELEASE_NAME))
     }
 
-    if (TICKETS !== '') {
+    if (TICKETS !== '' && version !== undefined) {
       const tickets = TICKETS.split(',')
       for (const ticket of tickets) {
-        info(DebugMessages.UPDATING_TICKET(ticket))
+        info(DebugMessages.ASSIGNING_TICKET(ticket, version.id))
 
-        if (version?.id !== undefined) {
-          api.updateIssue(ticket, version.id)
-          info(DebugMessages.TICKET_UPDATED(ticket, version.id))
-        }
+        api.updateIssue(ticket, version.id)
+        info(DebugMessages.TICKET_ASSIGNED(ticket, version.id))
       }
     }
   } catch (_e) {
