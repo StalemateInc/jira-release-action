@@ -35,7 +35,7 @@ async function run(): Promise<void> {
       if (version === undefined) {
         info(DebugMessages.VERSION_NOT_FOUND(RELEASE_NAME))
       } else {
-        info(DebugMessages.VERSION_FOUND(RELEASE_NAME))
+        info(DebugMessages.VERSION_FOUND(RELEASE_NAME, version.id))
       }
 
       return
@@ -61,25 +61,29 @@ async function run(): Promise<void> {
         version = await api.createVersion(versionToCreate)
         info(DebugMessages.VERSION_CREATED(RELEASE_NAME))
       }
-    } else if (release) {
-      info(DebugMessages.VERSION_WILL_BE_RELEASED(RELEASE_NAME))
+    } else {
+      info(DebugMessages.VERSION_FOUND(RELEASE_NAME, version.id))
 
-      const versionToUpdate: UpdateVersionParams = {
-        released: true,
-        releaseDate: new Date().toISOString()
+      if (release) {
+        info(DebugMessages.VERSION_WILL_BE_RELEASED(RELEASE_NAME))
+
+        const versionToUpdate: UpdateVersionParams = {
+          released: true,
+          releaseDate: new Date().toISOString()
+        }
+
+        version = await api.updateVersion(version.id, versionToUpdate)
+        info(DebugMessages.VERSION_RELEASED(RELEASE_NAME))
       }
-
-      version = await api.updateVersion(version.id, versionToUpdate)
-      info(DebugMessages.VERSION_RELEASED(RELEASE_NAME))
     }
 
     if (TICKETS !== '' && version !== undefined) {
       const tickets = TICKETS.split(',')
       for (const ticket of tickets) {
-        info(DebugMessages.ASSIGNING_TICKET(ticket, version.id))
+        info(DebugMessages.ADDING_TICKET_TO_VERSION(ticket, RELEASE_NAME))
 
         api.updateIssue(ticket, version.id)
-        info(DebugMessages.TICKET_ASSIGNED(ticket, version.id))
+        info(DebugMessages.TICKET_ADDED_TO_VERSION(ticket, version.id))
       }
     }
   } catch (_e) {
