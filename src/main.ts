@@ -86,9 +86,12 @@ async function run(): Promise<void> {
         info(DebugMessages.TICKET_ADDED_TO_VERSION(ticket, version.id))
       }
     }
-  } catch (_e) {
-    const e: Error = _e as Error
-    setFailed(e)
+  } catch (e: unknown) {
+    if (e instanceof Error) {
+      setFailed(e.message)
+    } else {
+      setFailed(String(e))
+    }
   }
 }
 

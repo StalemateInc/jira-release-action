@@ -22,7 +22,7 @@ export class API {
 
       return response.data
     } catch (error: unknown) {
-      return Promise.reject(toMoreDescriptiveError(error))
+      throw toMoreDescriptiveError(error)
     }
   }
 
@@ -38,7 +38,7 @@ export class API {
 
       return response.data
     } catch (error: unknown) {
-      return Promise.reject(toMoreDescriptiveError(error))
+      throw toMoreDescriptiveError(error)
     }
   }
 
@@ -61,7 +61,7 @@ export class API {
 
       return response.data
     } catch (error: unknown) {
-      return Promise.reject(toMoreDescriptiveError(error))
+      throw toMoreDescriptiveError(error)
     }
   }
 
@@ -74,7 +74,7 @@ export class API {
 
       return response.data
     } catch (error: unknown) {
-      return Promise.reject(toMoreDescriptiveError(error))
+      throw toMoreDescriptiveError(error)
     }
   }
 
