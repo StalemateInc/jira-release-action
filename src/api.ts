@@ -42,29 +42,6 @@ export class API {
     }
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  async updateIssue(ticket_id: string, version_id: string): Promise<any> {
-    try {
-      const response = await axios.put(
-        `https://${this.domain}.atlassian.net/rest/api/3/issue/${ticket_id}`,
-        {
-          update: {
-            fixVersions: [
-              {
-                add: { id: version_id }
-              }
-            ]
-          }
-        },
-        { headers: this._headers() }
-      )
-
-      return response.data
-    } catch (error: unknown) {
-      throw toMoreDescriptiveError(error)
-    }
-  }
-
   async loadProject(): Promise<JiraProject> {
     try {
       const response = await axios.get<JiraProject>(

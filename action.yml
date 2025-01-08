@@ -28,15 +28,6 @@ inputs:
     description: 'Create the version as released'
     default: 'false'
     required: false
-  tickets:
-    description: Comma-separated list of ticket IDs to include in the release.
-    default: ''
-    required: false
-  dry_run:
-    description: Perform only read actions and show the logs.
-    default: 'false'
-    required: false
-
 
 runs:
   using: 'node20'
